@@ -1,3 +1,5 @@
+package sprint1.review;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,7 +8,6 @@ import java.util.stream.Collectors;
 
 public class A {
 
-    //https://contest.yandex.ru/contest/22450/run-report/89659323/
     private static List<Integer> getDistance(List<Integer> street) {
         int streetSize = street.size();
         List<Integer> result = new ArrayList<>(streetSize);
@@ -31,8 +32,6 @@ public class A {
                 for (int j = left + 1; j < right; j++) {
                     result.set(j, Math.min(j - left, right - j));
                 }
-                //в начале как раз сделал в 2 прохода, но задача не проходила по времени, решил пройтись за 1.
-                // тут пример решения в 2 прохода: https://contest.yandex.ru/contest/22450/run-report/89658106/
             }
         }
 

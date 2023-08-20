@@ -1,9 +1,10 @@
+package sprint1.review;
+
 import java.io.*;
 import java.util.*;
 
 public class B {
 
-    //https://contest.yandex.ru/contest/22450/run-report/89692664/
     private static int getMaxPoint(int k, List<String> matrix) {
         List<Integer> countOfNambers = new ArrayList<>(9);
         for (int i = 0; i < 9; i++) {
