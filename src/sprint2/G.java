@@ -5,10 +5,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class F {
+public class G {
 
 //    Нужно реализовать класс StackMax, который поддерживает операцию определения максимума среди всех элементов в стеке. Класс должен поддерживать операции push(x), где x – целое число, pop() и get_max().
 //
@@ -36,7 +35,7 @@ public class F {
     }
 
     private static void runComands(List<String> commands) {
-        Stack stack = new Stack();
+        MaxEffectiveStack stack = new MaxEffectiveStack();
         for (String command : commands) {
             if (command.contains(" ")) {
                 String[] s = command.split(" ");
@@ -56,18 +55,23 @@ public class F {
     private static int readInt(BufferedReader reader) throws IOException {
         return Integer.parseInt(reader.readLine());
     }
-
-
 }
 
-class Stack {
+class MaxEffectiveStack {
     private List<Integer> items;
+    private List<Integer> max;
 
-    public Stack() {
+    public MaxEffectiveStack() {
         items = new ArrayList<>();
+        max = new ArrayList<>();
     }
 
     public void push(int item) {
+        if (items.isEmpty()) {
+            max.add(item);
+        } else {
+            max.add(Math.max(item, max.get(max.size() - 1)));
+        }
         items.add(item);
     }
 
@@ -76,16 +80,14 @@ class Stack {
             System.out.println("error");
             return;
         }
-         items.remove(items.size() - 1);
+        items.remove(items.size() - 1);
+        max.remove(max.size() - 1);
     }
 
     public String getMax() {
-        if (items.isEmpty()) {
+        if (max.isEmpty()) {
             return "None";
         }
-
-        ArrayList<Integer> strings = new ArrayList<>(items);
-        Collections.sort(strings);
-        return strings.get(strings.size() - 1).toString();
+        return max.get(max.size() - 1).toString();
     }
 }
