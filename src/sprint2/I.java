@@ -53,7 +53,7 @@ public class I {
                 System.out.println(queue.peek());
             }
             if ("size".equals(command)) {
-                System.out.println(queue.size);
+                System.out.println(queue.size());
             }
         }
     }
