@@ -3,29 +3,24 @@ package sprint2.review;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class A {
 
-    private static void runCommands(int maxQueueSize, List<String> commands) {
-        MyCircleQueue queue = new MyCircleQueue(maxQueueSize);
-        for (String command : commands) {
-            if (command.contains(" ")) {
-                String[] s = command.split(" ");
-                if ("push_back".equals(s[0])) {
-                    queue.pushBack(s[1]);
-                }
-                if ("push_front".equals(s[0])) {
-                    queue.pushFront(s[1]);
-                }
+    private static void runCommand(MyCircleQueue queue, String command) {
+        String[] s = command.split(" ");
+        if (command.contains(" ")) {
+            if ("push_back".equals(s[0])) {
+                queue.pushBack(s[1]);
             }
-            if ("pop_front".equals(command)) {
-                System.out.println(queue.popFront());
+            if ("push_front".equals(s[0])) {
+                queue.pushFront(s[1]);
             }
-            if ("pop_back".equals(command)) {
-                System.out.println(queue.popBack());
-            }
+        }
+        if ("pop_front".equals(command)) {
+            System.out.println(queue.popFront());
+        }
+        if ("pop_back".equals(command)) {
+            System.out.println(queue.popBack());
         }
     }
 
@@ -33,11 +28,10 @@ public class A {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             int commandsNumber = readInt(reader);
             int maxQueueSize = readInt(reader);
-            List<String> commands = new ArrayList<>(commandsNumber);
+            MyCircleQueue queue = new MyCircleQueue(maxQueueSize);
             while (reader.ready()) {
-                commands.add(reader.readLine());
+                runCommand(queue, reader.readLine());
             }
-            runCommands(maxQueueSize, commands);
         }
     }
 
@@ -62,19 +56,23 @@ public class A {
         }
 
         public void pushBack(String value) {
-            if (size != maxSize) {
-                queue[tail] = value;
-                tail = (tail - 1 + maxSize) % maxSize;
-                size++;
-            } else System.out.println("error");
+            if (isFull()) {
+                System.out.println("error");
+                return;
+            }
+            queue[tail] = value;
+            tail = (tail - 1 + maxSize) % maxSize;
+            size++;
         }
 
         public void pushFront(String value) {
-            if (size != maxSize) {
-                queue[head] = value;
-                head = (head + 1) % maxSize;
-                size++;
-            } else System.out.println("error");
+            if (isFull()) {
+                System.out.println("error");
+                return;
+            }
+            queue[head] = value;
+            head = (head + 1) % maxSize;
+            size++;
         }
 
         public String popBack() {
@@ -101,6 +99,10 @@ public class A {
 
         public boolean isEmpty() {
             return size == 0;
+        }
+
+        public boolean isFull() {
+            return size == maxSize;
         }
     }
 }
