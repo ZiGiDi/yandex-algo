@@ -1,36 +1,45 @@
 package sprint2.review;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class A {
 
-    private static void runCommand(MyCircleQueue queue, String command) {
-        String[] s = command.split(" ");
+    private static void runCommand(MyCircleDequeue queue,
+                                   String command,
+                                   BufferedWriter writer) throws IOException {
         if (command.contains(" ")) {
-            if ("push_back".equals(s[0])) {
-                queue.pushBack(s[1]);
-            }
-            if ("push_front".equals(s[0])) {
-                queue.pushFront(s[1]);
+            try {
+                String[] s = command.split(" ");
+                if ("push_back".equals(s[0])) {
+                    queue.pushBack(s[1]);
+                }
+                if ("push_front".equals(s[0])) {
+                    queue.pushFront(s[1]);
+                }
+            } catch (FullDequeException exception) {
+                writer.write("error");
+                writer.newLine();
             }
         }
         if ("pop_front".equals(command)) {
-            System.out.println(queue.popFront());
+            writer.write(queue.popFront());
+            writer.newLine();
         }
         if ("pop_back".equals(command)) {
-            System.out.println(queue.popBack());
+            writer.write(queue.popBack());
+            writer.newLine();
         }
     }
 
     public static void main(String[] args) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))
+        ) {
             int commandsNumber = readInt(reader);
             int maxQueueSize = readInt(reader);
-            MyCircleQueue queue = new MyCircleQueue(maxQueueSize);
+            MyCircleDequeue queue = new MyCircleDequeue(maxQueueSize);
             while (reader.ready()) {
-                runCommand(queue, reader.readLine());
+                runCommand(queue, reader.readLine(), writer);
             }
         }
     }
@@ -39,7 +48,7 @@ public class A {
         return Integer.parseInt(reader.readLine());
     }
 
-    private static class MyCircleQueue {
+    private static class MyCircleDequeue {
 
         private String[] queue;
         private int head;
@@ -47,7 +56,7 @@ public class A {
         private int maxSize;
         private int size;
 
-        public MyCircleQueue(int queueSize) {
+        public MyCircleDequeue(int queueSize) {
             this.queue = new String[queueSize];
             head = 1;
             tail = 0;
@@ -55,20 +64,18 @@ public class A {
             size = 0;
         }
 
-        public void pushBack(String value) {
+        public void pushBack(String value) throws FullDequeException {
             if (isFull()) {
-                System.out.println("error");
-                return;
+                throw new FullDequeException();
             }
             queue[tail] = value;
             tail = (tail - 1 + maxSize) % maxSize;
             size++;
         }
 
-        public void pushFront(String value) {
+        public void pushFront(String value) throws FullDequeException {
             if (isFull()) {
-                System.out.println("error");
-                return;
+                throw new FullDequeException();
             }
             queue[head] = value;
             head = (head + 1) % maxSize;
@@ -104,5 +111,8 @@ public class A {
         public boolean isFull() {
             return size == maxSize;
         }
+    }
+
+    public static class FullDequeException extends Exception {
     }
 }
