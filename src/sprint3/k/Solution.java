@@ -10,20 +10,47 @@ import java.util.Arrays;
 
 public class Solution {
     public static int[] merge(int[] arr, int left, int mid, int right) {
-       return mergeSort(arr);
+        int[] result = new int[arr.length];
+        int[] leftArr = Arrays.copyOfRange(arr, left, mid);
+        int[] rightArr = Arrays.copyOfRange(arr, mid, right);
+
+        // сливаем результаты
+        int l = 0, r = 0, k = 0;
+        while (l < leftArr.length && r < rightArr.length) {
+            // выбираем, из какого массива забрать минимальный элемент
+            if (leftArr[l] <= rightArr[r]) {
+                result[k] = leftArr[l];
+                l++;
+            } else {
+                result[k] = rightArr[r];
+                r++;
+            }
+            k++;
+        }
+
+        // Если один массив закончился раньше, чем второй, то
+        // переносим оставшиеся элементы второго массива в результирующий
+        while (l < leftArr.length) {
+            result[k] = leftArr[l];   // перенеси оставшиеся элементы left в result
+            l++;
+            k++;
+        }
+        while (r < rightArr.length) {
+            result[k] = rightArr[r];  // перенеси оставшиеся элементы right в result
+            r++;
+            k++;
+        }
+        return result;
     }
 
     public static void merge_sort(int[] arr, int left, int right) {
         int[] sortedPart = Arrays.copyOfRange(arr, left, right);
         sortedPart = mergeSort(sortedPart);
         int j = 0;
-        for (int i = left; i < right; i++){
+        for (int i = left; i < right; i++) {
             arr[i] = sortedPart[j];
             j++;
         }
-
-        // Your code
-        // “ヽ(´▽｀)ノ”
     }
 
     public static void main(String[] args) {
@@ -43,10 +70,10 @@ public class Solution {
         }
 
         // запускаем сортировку рекурсивно на левой половине
-        int[] left = mergeSort(Arrays.copyOfRange(array, 0, array.length/2));
+        int[] left = mergeSort(Arrays.copyOfRange(array, 0, array.length / 2));
 
         // запускаем сортировку рекурсивно на правой половине
-        int[] right = mergeSort(Arrays.copyOfRange(array, array.length/2, array.length));
+        int[] right = mergeSort(Arrays.copyOfRange(array, array.length / 2, array.length));
 
         // заводим массив для результата сортировки
         int[] result = new int[array.length];
