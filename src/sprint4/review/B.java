@@ -2,13 +2,14 @@ package sprint4.review;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 public class B {
-    private static final String WORD_SEPARATOR = " ";
-    private static final MyHashTable hashTable = new MyHashTable();
+    private static final String LINE_SEPARATOR = " ";
+    private static MyHashTable hashTable;
 
     private static void runCommand(String command, BufferedWriter writer) throws IOException {
-        String[] split = command.split(WORD_SEPARATOR);
+        String[] split = command.split(LINE_SEPARATOR);
 
         if ("put".equals(split[0])) {
             hashTable.put(Integer.parseInt(split[1]), Integer.parseInt(split[2]));
@@ -30,10 +31,12 @@ public class B {
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))
         ) {
             int numberOfCommands = readInt(reader);
+            int size = numberOfCommands > 10 ? numberOfCommands / 10 : 1;
+            hashTable = new MyHashTable(size);
             for (int i = 0; i < numberOfCommands; i++) {
                 try {
                     runCommand(reader.readLine(), writer);
-                } catch (RuntimeException e) {
+                } catch (NoSuchElementException e) {
                     writer.write("None");
                     writer.newLine();
                 }
@@ -48,14 +51,19 @@ public class B {
 }
 
 class MyHashTable {
-
-    private static final int HASH_TABLE_SIZE = 100_000;
+    //При любой последовательности команд, количество ключей в хеш-таблице не может превышать 10^5
+    private static final int DEFAULT_HASH_TABLE_SIZE = 100_000;
 
     int size = 0;
     Node[] buckets;
 
     public MyHashTable() {
-        buckets = new Node[HASH_TABLE_SIZE];
+        buckets = new Node[DEFAULT_HASH_TABLE_SIZE];
+        Arrays.fill(buckets, null);
+    }
+
+    public MyHashTable(int size) {
+        buckets = new Node[size];
         Arrays.fill(buckets, null);
     }
 
@@ -67,18 +75,11 @@ class MyHashTable {
             size++;
             return;
         }
-        if (head.key.equals(key)) {
-            head.value = value;
-        }
 
-        Node bucket = head;
-        while (bucket.nextNode != null) {
-            Node nextNode = bucket.nextNode;
-            if (nextNode.key.equals(key)) {
-                nextNode.value = value;
-                return;
-            }
-            bucket = nextNode;
+        Node node = findNode(key, head);
+        if (node != null) {
+            node.value = value;
+            return;
         }
 
         Node newHead = new Node(key, value);
@@ -87,78 +88,85 @@ class MyHashTable {
         size++;
     }
 
-    private static int getBucketNumber(Integer key) {
-        return Math.abs(key.hashCode() % HASH_TABLE_SIZE);
-    }
-
     public Integer get(Integer key) {
         if (isEmpty()) {
-            throw new RuntimeException();
+            throw new NoSuchElementException();
         }
 
         int bucketNumber = getBucketNumber(key);
-        Node bucket = buckets[bucketNumber];
-        if (bucket == null) {
-            throw new RuntimeException();
+        Node head = buckets[bucketNumber];
+        Node node = findNode(key, head);
+        if (node != null) {
+            return node.value;
         }
-
-        if (bucket.key.equals(key)) {
-            return bucket.value;
-        }
-
-        while (bucket.nextNode != null) {
-            Node nextNode = bucket.nextNode;
-            if (nextNode.key.equals(key)) {
-                return nextNode.value;
-            }
-            bucket = nextNode;
-        }
-        throw new RuntimeException();
+        throw new NoSuchElementException();
     }
 
     public Integer delete(Integer key) {
         if (isEmpty()) {
-            throw new RuntimeException();
+            throw new NoSuchElementException();
         }
 
         int bucketNumber = getBucketNumber(key);
-        Node bucket = buckets[bucketNumber];
-        if (bucket == null) {
-            throw new RuntimeException();
+        Node head = buckets[bucketNumber];
+        if (head == null) {
+            throw new NoSuchElementException();
         }
 
-        if (bucket.key.equals(key)) {
-            if (bucket.nextNode == null) {
+        if (head.key.equals(key)) {
+            if (head.nextNode == null) {
                 buckets[bucketNumber] = null;
                 size--;
-                return bucket.value;
+                return head.value;
             }
-            buckets[bucketNumber] = bucket.nextNode;
+            buckets[bucketNumber] = head.nextNode;
             size--;
-            return bucket.value;
+            return head.value;
         }
 
-        while (bucket.nextNode != null) {
-            Node nextNode = bucket.nextNode;
+        Node node = head;
+        while (node.nextNode != null) {
+            Node nextNode = node.nextNode;
             if (nextNode.key.equals(key)) {
-                bucket.nextNode = nextNode.nextNode;
+                node.nextNode = nextNode.nextNode;
                 size--;
                 return nextNode.value;
             }
-            bucket = nextNode;
+            node = nextNode;
         }
 
-        throw new RuntimeException();
-
+        throw new NoSuchElementException();
     }
 
     public boolean isEmpty() {
         return size == 0;
     }
 
+    private int getBucketNumber(Integer key) {
+        return Math.abs(key.hashCode() % buckets.length);
+    }
+
+    private Node findNode(Integer key, Node head) {
+        if (head == null) {
+            throw new NoSuchElementException();
+        }
+
+        if (head.key.equals(key)) {
+            return head;
+        }
+
+        Node node = head;
+        while (node.nextNode != null) {
+            Node nextNode = node.nextNode;
+            if (nextNode.key.equals(key)) {
+                return nextNode;
+            }
+            node = nextNode;
+        }
+        return null;
+    }
 
     static class Node {
-
         final Integer key;
         Integer value;
         Node nextNode;
@@ -168,5 +176,4 @@ class MyHashTable {
             this.value = value;
         }
     }
-
 }
