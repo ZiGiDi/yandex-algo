@@ -26,21 +26,21 @@ public class C {
             getHash(a, m, word);
 
             for (List<Integer> boundary : boundaries) {
-                int hash = getHash(boundary);
+                int hash = getHash(boundary, m);
                 writer.write(String.valueOf(hash));
                 writer.newLine();
             }
         }
     }
 
-    private static int getHash(List<Integer> boundary) {
+    private static int getHash(List<Integer> boundary, int m) {
         Integer firstIndex = boundary.get(0);
         Integer lastIndex = boundary.get(1);
 
         Integer first = indexWithHashMap.get(firstIndex);
         Integer aPow = aPowerOfNMap.get(word.length() - lastIndex);
         Integer last = indexWithHashMap.get(lastIndex + 1);
-        return Math.floorDiv(first, aPow) - last;
+        return (Math.floorDiv(first, aPow) - last + m) % m;
     }
 
     private static int readInt(BufferedReader reader) throws IOException {
@@ -66,7 +66,7 @@ public class C {
         aPowerOfNMap.put(0, 1);
         aPowerOfNMap.put(1, a);
         int length = charArray.length;
-        int sum = (charArray[length - 1]) % 10;
+        int sum = (charArray[length - 1]) % m;
         indexWithHashMap.put(length, sum);
         indexWithHashMap.put(length + 1, 0);
         for (int i = length - 2; i >= 0; i--) {
