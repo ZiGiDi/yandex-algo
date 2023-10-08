@@ -9,6 +9,15 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+/*
+Напишите функцию, которая будет выводить по неубыванию все ключи от L до R
+включительно в заданном бинарном дереве поиска.
+Ключи в дереве могут повторяться. Решение должно иметь сложность O(h+k), где h –— глубина дерева,
+k — число элементов в ответе.
+В данной задаче если в узле содержится ключ x, то другие ключи, равные x, могут быть как в правом,
+ так и в левом поддереве данного узла. (Дерево строил стажёр, так что ничего страшного).
+ */
+
 public class Solution {
 
     public static void printRange(Node root, int L, int R, BufferedWriter writer) throws IOException {
@@ -40,7 +49,7 @@ public class Solution {
                     response.add(value);
                 } else if (value <= response.getFirst()) {
                     response.addFirst(value);
-                } else if(value >= response.getLast()){
+                } else if (value >= response.getLast()) {
                     response.addLast(value);
                 } else {
                     Integer tempValue = response.pollLast();
