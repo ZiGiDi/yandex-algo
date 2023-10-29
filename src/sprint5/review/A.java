@@ -58,9 +58,7 @@ public class A {
 
             int parentIndex = index / 2;
             if (heap.get(parentIndex - 1).compareTo(heap.get(index - 1)) < 0) {
-                Competitor temp = heap.get(parentIndex - 1);
-                heap.set(parentIndex - 1, heap.get(index - 1));
-                heap.set(index - 1, temp);
+                swapByIndexes(parentIndex - 1, index - 1);
                 siftUp(parentIndex);
             }
         }
@@ -79,14 +77,18 @@ public class A {
             }
 
             if (heap.get(index).compareTo(heap.get(indexLargest)) < 0) {
-                Competitor temp = heap.get(index);
-                heap.set(index, heap.get(indexLargest));
-                heap.set(indexLargest, temp);
+                swapByIndexes(index, indexLargest);
                 siftDown(indexLargest);
             }
         }
-    }
 
+        private static void swapByIndexes(int a, int b) {
+            Competitor temp = heap.get(a);
+            heap.set(a, heap.get(b));
+            heap.set(b, temp);
+        }
+
+    }
     private static class Competitor implements Comparable<Competitor> {
 
         private static final Comparator<Competitor> COMPARATOR = Comparator
