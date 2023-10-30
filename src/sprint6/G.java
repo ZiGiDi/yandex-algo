@@ -4,10 +4,10 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class D {
+public class G {
 
-//    Задан неориентированный граф. Обойдите поиском в ширину все вершины, достижимые из заданной вершины s,
-//    и выведите их в порядке обхода, если начинать обход из s.
+//    Под расстоянием между двумя вершинами в графе будем понимать длину кратчайшего пути между ними в рёбрах.
+//    Для данной вершины s определите максимальное расстояние от неё до другой вершины неориентированного графа.
 
     private static List<Integer> colors;
     private static List<List<Integer>> adjacencyList;
@@ -15,8 +15,6 @@ public class D {
     //    BFS Поиск в ширину
     private static List<Integer> distance;
     private static List<Integer> previous;
-
-    private static final List<Integer> order = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -95,7 +93,6 @@ public class D {
         distance.set(s - 1, 0);
         while (!planned.isEmpty()) {
             int u = planned.poll();// Возьмём вершину из очереди.
-            order.add(u);
             for (int v : adjacencyList.get(u - 1)) { // adjList - список смежности графа.
                 if (colors.get(v - 1) == 0) { // Серые и чёрные вершины уже
                     // либо в очереди, либо обработаны.
@@ -110,9 +107,7 @@ public class D {
     }
 
     private static void writeSolution(BufferedWriter writer) throws IOException {
-        String vertexesList = order.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(" "));
-        writer.write(vertexesList);
+        Integer max = Collections.max(distance);
+        writer.write(String.valueOf(max));
     }
 }
