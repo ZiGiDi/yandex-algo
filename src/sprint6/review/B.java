@@ -95,13 +95,13 @@ public class B {
                         planned.add(v); // Запланируем посещение вершины.
                     }
                     if (colors.get(v) == GREY) {
-                        return true;
+                        return true; //Если наталкиваемся уже на серую вершину, значит граф цикличный
                     }
                 }
                 continue;
             }
             if (colors.get(u) == GREY) {
-                colors.set(u, BLACK);
+                colors.set(u, BLACK); // В конце красим обработанные вершины в черный цвет
             }
         }
         return false;
